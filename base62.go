@@ -33,9 +33,9 @@ func EncodeBytes(b []byte) string {
     lenb := len(b)
     for i := 0; i < lenb; i += 8 {
         j := i + 8
-		if i > lenb {
-			j = lenb
-		}
+	if i > lenb {
+		j = lenb
+	}
         out.WriteString(Encode(binary.BigEndian.Uint64(b[i:j])))
     }
     return out.String()
