@@ -1,6 +1,7 @@
 package base62
 
 import (
+	"encoding/binary"
 	"fmt"
 	"math"
 	"strings"
@@ -11,7 +12,7 @@ const (
 	base     = uint64(len(alphabet))
 )
 
-// Encode decoded integer to base62 string.
+// Encode integer as a base62 string
 func Encode(n uint64) string {
 	if n == 0 {
 		return "0"
@@ -26,8 +27,22 @@ func Encode(n uint64) string {
 	return string(b)
 }
 
-// Decode a base62 encoded string to int.
-// Returns an error if input s is not valid base62 literal [0-9a-zA-Z].
+// Encode byte array as a base62 string
+func EncodeBytes(b []byte) string {
+    out := strings.Builder{}
+    lenb := len(b)
+    for i := 0; i < lenb; i += 8 {
+        j := i + 8
+		if i > lenb {
+			j = lenb
+		}
+        out.WriteString(Encode(binary.BigEndian.Uint64(b[i:j])))
+    }
+    return out.String()
+}
+
+// Decode a base62-encoded string to an integer
+// Returns an error if input s is not valid base62 literal [0-9a-zA-Z]
 func Decode(s string) (uint64, error) {
 	var r uint64
 	for _, c := range []byte(s) {
